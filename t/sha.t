@@ -1,27 +1,33 @@
 #!/usr/local/bin/perl -w
 
+print "1..1\n";
+my $bad;
+
 use SHA qw(sha_version);
 $ver = &sha_version();
 
 sub do_test
 {
-    my ($label, $str, $expect0, $expect1) = @_;
+    my ($label, $str, $expect0, $expect1, $skip_big_test) = @_;
     my ($c, @tmp);
     my $sha = new SHA;
     $sha->add($str);
     $expect = ($ver eq 'SHA-1') ? $expect1 : $expect0;
     print "$label:\nEXPECT:   $expect\n";
-    print "RESULT 1: " . $sha->hexdigest() . "\n";
-    print "RESULT 2: " . $sha->hexhash($str) . "\n";
-# set run_big_test to 0 if you run out of memory
-    $run_big_test = 0;
-    if ($run_big_test) {
+    my $hexdigest = $sha->hexdigest();
+    my $hexhash   =  $sha->hexhash($str);
+    print "RESULT 1: $hexdigest\n";
+    print "RESULT 2: $hexhash\n";
+    $bad++ if $hexdigest ne $expect || $hexhash ne $expect;
+    unless ($skip_big_test) {
 	$sha->reset();
 	@tmp = split(//, $str);
 	foreach $c (@tmp) {
 	    $sha->add($c);
 	}
-	print "RESULT 3: " . $sha->hexdigest() . "\n";
+	my $hexdigest = $sha->hexdigest();
+	print "RESULT 3: $hexdigest\n";
+	$bad++ if $hexdigest ne $expect;
     } else {
 	print "skipping RESULT 3\n";
     }
@@ -36,4 +42,7 @@ do_test("test2", "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
     "84983e44 1c3bd26e baae4aa1 f95129e5 e54670f1");
 do_test("test3", "a" x 1000000,
     "3232affa 48628a26 653b5aaa 44541fd9 0d690603",
-    "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f");
+    "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f", 1);
+
+print "not " if $bad;
+print "ok 1\n";

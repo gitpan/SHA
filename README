@@ -1,76 +1,14 @@
-SHA Perl 5 Extension Version 1.2
+This module is depreciated.  Please use Digest::SHA1 instead.
 
-This is the Secure Hash Algorithm extension to Perl 5. I have used
-Perl 5.003_xx in making this extension, but I know of no reason why
-it could not be built with any version >= 5.002. The interface was
-originally copied from the MD5 interface by Neil Winton
-<N.Winton@axion.bt.co.uk>.
+This module (SHA.pm) is just a thin wrapper around the Digest::SHA1
+module.  It is provided so that legacy code that rely on the old
+interface continue to work.
 
-Very brief summary of what's new in 1.2:
+You will need perl version 5.004 or better to install this module.
+The Digest::SHA1 module must be installed.
 
-o	Easier configuration: automatic determination of byte
-	ordering; you get asked whether you want to use SHA or SHA-1
-	(default is SHA-1)
+Copyright 1999-2001 Gisle Aas.
+Copyright 1997 Uwe Hollerbach.
 
-o	Correct operation on big- and little-endian, 32- and 64-bit
-	machines (I believe). (Not tested on all possible machines...)
-
-o	A new routine that tells which version of the algorithm is
-	being used: &SHA::sha_version returns a string, either 'SHA'
-	or 'SHA-1', to indicate which one was chosen
-
-To build the extension, unpack this distribution (presumably you have
-already succeeded in doing this...), then type
-
-    perl Makefile.PL	# Create a Makefile; this automatically determines
-			# your byte order from the Config module, and
-			# it also asks you if you want to use the old
-			# SHA algorithm or the new SHA-1 algorithm:
-			# I recommend the new SHA-1 algorithm
-
-    make		# Build the extension locally; this does
-			# require an ANSI C compiler for sha_func.c;
-			# on Sparc machines, I have had to manually
-			# type "gcc -c -O2 sha_func.c", and that seemed
-			# to work successfully...
-
-    make test		# Check to see that everything went ok
-
-    make install	# Install it into the system directory
-
-This creates a dynamically-linked extension. I haven't tried making a
-statically-linked extension. If MakeMaker doesn't create a target for
-a statically-extended perl executable, you should be able to unpack
-this distribution in the ext/ subdirectory of the perl distribution,
-then include SHA in the list of statically-linked extensions during
-configuration of perl. I have not tried that myself.
-
-This version of the SHA extension module should work under both big-
-and little-endian machines with both 32- and 64-bit longs (more
-precisely, perl's byteorder configuration variable has one of the
-values 1234, 4321, 12345678, 87654321). I have successfully tested the
-module under Linux/x86 (1234), Solaris/sparc (4321), and DEC Alpha
-(12345678). (I have also tested it under "simulated" 64-bit machines:
-using "unsigned long long", I tested 12345678 under Linux/x86, and
-87654321 under Solaris/sparc. This requires editing of the files sha.h
-and endian.h after the "perl Makefile.PL" and before the "make",
-above. These tests were also successful.) I'd be grateful for any
-success or failure reports (or bug fixes!) for other architectures. If
-you have a weird byte order, say 3412, the extension will fail to
-compile, rather than silently computing incorrect hashes. (But it
-should be straightforward to add the necessary code to handle other
-byte orders.)
-
-After you've installed the SHA extension, you should be able to type
-'perl sha_driver.pl -x' or 'perl test.pl' to check if it all worked
-ok, including the installation. If the actual results don't match the
-expected ones, there's something wrong.
-
-For more details on how to use the extension, look at sha_driver.pl or
-at SHA.pod.
-
-This extension is available under the same copyright as Perl itself
-is. The C sources in sha_func.c and in sha.h are in the public domain.
-
-Please direct comments to me:
-Uwe Hollerbach <uh@alumni.caltech.edu> or <uweh@bu.edu>
+This library is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.

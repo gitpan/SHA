@@ -1,11 +1,7 @@
+Changes
 MANIFEST
+SHA.pm
 Makefile.PL
 README
-SHA.pm
-SHA.pod
-SHA.xs
-sha.h
-sha_driver.pl
-sha_func.c
-test.pl
-typemap
+t/sha.t
+
