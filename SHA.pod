@@ -5,13 +5,15 @@ SHA - Perl interface to the NIST Secure Hash Algorithm
 =head1 SYNOPSIS
 
     use SHA;
-    
+
+    $version = &SHA::sha_version;
+
     $context = new SHA;
     $context->reset();
-    
+
     $context->add(LIST);
     $context->addfile(HANDLE);
-    
+
     $digest = $context->digest();
     $string = $context->hexdigest();
 
@@ -23,6 +25,10 @@ SHA - Perl interface to the NIST Secure Hash Algorithm
 The B<SHA> module allows you to use the NIST SHA message digest algorithm
 from within Perl programs.
 
+The sha_version routine returns the version of the algorithm which is being
+used: either "SHA" for the original algorithm or "SHA-1" for the updated
+algorithm.
+
 A new SHA context object is created with the B<new> operation.
 Multiple simultaneous digest contexts can be maintained, if desired.
 The context is updated with the B<add> operation which adds the
@@ -32,7 +38,7 @@ C<add('foo', 'bar')> produces the same effect as C<add('foo')>,
 C<add('bar')>, which in turn produces the same effect as C<add('foobar')>.
 
 The final message digest value is returned by the B<digest> operation
-as a 16-byte binary string. This operation delivers the result of
+as a 20-byte binary string. This operation delivers the result of
 operations since the last B<new> or B<reset> operation. Once the
 operation has been performed, the context must be B<reset> before
 being used to calculate another digest value.
@@ -41,19 +47,26 @@ Several convenience functions are also provided. The B<addfile>
 operation takes an open file-handle and reads it until end-of file in
 8192-byte blocks adding the contents to the context. The B<hexdigest>
 operation calls B<digest> and returns the result as a printable string
-of hexdecimal digits in eight-digit groups. The B<hash> operation
+of hexadecimal digits in eight-digit groups. The B<hash> operation
 performs the complete series of steps: B<reset>, B<add>, B<digest> on
-the supplied scalar value, and returns the result as a 16-byte binary
+the supplied scalar value, and returns the result as a 20-byte binary
 string. The B<hexhash> operation does the same thing, but returns the
 result in the format of the B<hexdigest> operation.
 
 =head1 EXAMPLE AND VALIDATION
 
-    use SHA 1.1;
+    use SHA 1.2;
 
+    $ver = &SHA::sha_version;
     $sha = new SHA;
 
-    print "EXPECT:   0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880\n";
+    if ($ver eq 'SHA') {
+	print "EXPECT:   0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880\n";
+    } elsif ($ver eq 'SHA-1') {
+	print "EXPECT:   a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d\n";
+    } else {
+	die "panic! unrecognized output '$ver' from sha_version\n";
+    }
 
     $sha->reset();
     $sha->add("abc");
@@ -95,7 +108,8 @@ result in the format of the B<hexdigest> operation.
 
     print "result b: " . unpack("H*", ($sha->hash("abc"))) . "\n";
 
-The above example will produce the output
+The above example will produce one of two outputs. If the original SHA
+algorithm is being used, the output will be:
 
     EXPECT:   0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
     RESULT 1: 0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
@@ -109,7 +123,27 @@ The above example will produce the output
     result a: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
     result b: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
 
+If the new SHA-1 algorithm is being used, the output will be
+
+    EXPECT:   a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 1: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 2: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 3: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 4: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 5: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 6: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 7: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    RESULT 8: a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d
+    result a: a9993e364706816aba3e25717850c26c9cd0d89d
+    result b: a9993e364706816aba3e25717850c26c9cd0d89d
+
 provided that the implementation is working correctly.
+
+=head1 FURTHER EXAMPLES AND VALIDATION
+
+The file sha_driver.pl contains further validation data and examples of
+how to use the SHA module. It may be invoked with the B<-h> flag, which gives
+further usage instructions; the B<-x> flag runs a few more tests.
 
 =head1 NOTE
 

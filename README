@@ -1,42 +1,76 @@
-SHA Perl 5 Extension Version 1.1
+SHA Perl 5 Extension Version 1.2
 
-This is the Secure Hash Algorithm extension to Perl 5. I have used Perl
-5.002 in making this extension; the interface was shamelessly copied
-from the MD5 interface by Neil Winton <N.Winton@axion.bt.co.uk>. I hope
-that it will work under 5.003 and later, but have not yet had a chance
-to check this out.
+This is the Secure Hash Algorithm extension to Perl 5. I have used
+Perl 5.003_xx in making this extension, but I know of no reason why
+it could not be built with any version >= 5.002. The interface was
+originally copied from the MD5 interface by Neil Winton
+<N.Winton@axion.bt.co.uk>.
+
+Very brief summary of what's new in 1.2:
+
+o	Easier configuration: automatic determination of byte
+	ordering; you get asked whether you want to use SHA or SHA-1
+	(default is SHA-1)
+
+o	Correct operation on big- and little-endian, 32- and 64-bit
+	machines (I believe). (Not tested on all possible machines...)
+
+o	A new routine that tells which version of the algorithm is
+	being used: &SHA::sha_version returns a string, either 'SHA'
+	or 'SHA-1', to indicate which one was chosen
 
 To build the extension, unpack this distribution (presumably you have
 already succeeded in doing this...), then type
 
-    perl Makefile.PL	# create a Makefile
-    make		# build the extension locally
-    make install	# put it into the system directory
+    perl Makefile.PL	# Create a Makefile; this automatically determines
+			# your byte order from the Config module, and
+			# it also asks you if you want to use the old
+			# SHA algorithm or the new SHA-1 algorithm:
+			# I recommend the new SHA-1 algorithm
 
-This creates a dynamically-linked extension. I don't have a target to
-make a statically-linked perl, sorry. You should be able to unpack this
-distribution in the ext/ subdirectory of the perl distribution, then
-include SHA in the list of statically-linked extensions during
-configuration of perl, but I have not tried that myself.
+    make		# Build the extension locally; this does
+			# require an ANSI C compiler for sha_func.c;
+			# on Sparc machines, I have had to manually
+			# type "gcc -c -O2 sha_func.c", and that seemed
+			# to work successfully...
+
+    make test		# Check to see that everything went ok
+
+    make install	# Install it into the system directory
+
+This creates a dynamically-linked extension. I haven't tried making a
+statically-linked extension. If MakeMaker doesn't create a target for
+a statically-extended perl executable, you should be able to unpack
+this distribution in the ext/ subdirectory of the perl distribution,
+then include SHA in the list of statically-linked extensions during
+configuration of perl. I have not tried that myself.
+
+This version of the SHA extension module should work under both big-
+and little-endian machines with both 32- and 64-bit longs (more
+precisely, perl's byteorder configuration variable has one of the
+values 1234, 4321, 12345678, 87654321). I have successfully tested the
+module under Linux/x86 (1234), Solaris/sparc (4321), and DEC Alpha
+(12345678). (I have also tested it under "simulated" 64-bit machines:
+using "unsigned long long", I tested 12345678 under Linux/x86, and
+87654321 under Solaris/sparc. This requires editing of the files sha.h
+and endian.h after the "perl Makefile.PL" and before the "make",
+above. These tests were also successful.) I'd be grateful for any
+success or failure reports (or bug fixes!) for other architectures. If
+you have a weird byte order, say 3412, the extension will fail to
+compile, rather than silently computing incorrect hashes. (But it
+should be straightforward to add the necessary code to handle other
+byte orders.)
 
 After you've installed the SHA extension, you should be able to type
-'perl sha_driver.pl -x' to check if it all worked ok. If the actual
-results don't match the expected ones, check that you have defined or
-undefined LITTLE_ENDIAN properly for your machine, in sha_func.c. The
-default is LITTLE_ENDIAN. By default, the first version of the SHA is
-implemented. By defining USE_MODIFIED_SHA, also in sha_func.c, the
-second version of the SHA can be used instead. The modification to the
-SHA was made by NIST because of unspecified security concerns in the
-first version. Since then, there have been some potential weaknesses
-which have appeared in another secure hash algorithm, MD5 from RSA Data
-Security Inc. It is possible that these changes to the SHA were
-intended to address equivalent weaknesses in it. Please note that I
-have no test results for that second version.
+'perl sha_driver.pl -x' or 'perl test.pl' to check if it all worked
+ok, including the installation. If the actual results don't match the
+expected ones, there's something wrong.
 
-To see how to use the extension, look at sha_driver.pl or at SHA.pod.
+For more details on how to use the extension, look at sha_driver.pl or
+at SHA.pod.
 
-This extension is available under the same copyright as Perl itself is.
-The C sources in sha_func.c and in sha.h are in the public domain.
+This extension is available under the same copyright as Perl itself
+is. The C sources in sha_func.c and in sha.h are in the public domain.
 
 Please direct comments to me:
 Uwe Hollerbach <uh@alumni.caltech.edu> or <uweh@bu.edu>

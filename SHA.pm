@@ -1,15 +1,16 @@
 package SHA;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT);
+use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 
-require Exporter;
+use Exporter;
 require DynaLoader;
 require AutoLoader;
 @ISA = qw(Exporter AutoLoader DynaLoader);
 # Items to export into callers namespace by default
 @EXPORT = qw();
-$VERSION = '1.1';
+@EXPORT_OK = qw(sha_version);
+$VERSION = '1.2';
 
 bootstrap SHA $VERSION;
 
@@ -18,7 +19,7 @@ sub addfile
     no strict 'refs';
     my ($self, $handle) = @_;
     my ($package, $file, $line) = caller;
-    my ($data);
+    my $data = ' ' x 8192;
 
     if (!ref($handle)) {
 	$handle = "$package::$handle" unless ($handle =~ /(\:\:|\')/);

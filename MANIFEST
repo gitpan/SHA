@@ -1,10 +1,11 @@
-README        2093
-MANIFEST       190
-Makefile.PL    261
-SHA.pm        1153
-SHA.pod       4120
-SHA.xs        2519
-sha.h          691
-sha_driver.pl 1619
-sha_func.c    7268
-typemap         22
+MANIFEST
+Makefile.PL
+README
+SHA.pm
+SHA.pod
+SHA.xs
+sha.h
+sha_driver.pl
+sha_func.c
+test.pl
+typemap
