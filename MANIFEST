@@ -1,0 +1,9 @@
+ 145   MANIFEST
+ 229   Makefile.PL
+ 638   SHA.pm
+3313   SHA.pod
+2499   SHA.xs
+ 650   sha.h
+1566   sha_driver.pl
+5826   sha_func.c
+  22   typemap
