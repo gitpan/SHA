@@ -18,9 +18,11 @@ typedef SHA_INFO	*SHA;
 
 MODULE = SHA		PACKAGE = SHA
 
+PROTOTYPES: DISABLE
+
 SHA
 new(packname = "SHA")
-	char *	packname
+	char *		packname
     CODE:
 	{
 	    RETVAL = (SHA_INFO *) safemalloc(sizeof(SHA_INFO));
@@ -61,7 +63,7 @@ add(context, ...)
 	    }
 	}
 
-char *
+SV *
 digest(context)
 	SHA	context
     CODE:

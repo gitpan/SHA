@@ -1,22 +1,29 @@
 package SHA;
 
+use strict;
+use vars qw($VERSION @ISA @EXPORT);
+
 require Exporter;
 require DynaLoader;
-@ISA = qw(Exporter DynaLoader);
+require AutoLoader;
+@ISA = qw(Exporter AutoLoader DynaLoader);
 # Items to export into callers namespace by default
 @EXPORT = qw();
-# Other items we are prepared to export if requested
-@EXPORT_OK = qw();
+$VERSION = '1.1';
 
-bootstrap SHA;
+bootstrap SHA $VERSION;
 
 sub addfile
 {
+    no strict 'refs';
     my ($self, $handle) = @_;
-    my ($len, $data);
+    my ($package, $file, $line) = caller;
+    my ($data);
 
-    while ($len = read($handle, $data, 8192))
-    {
+    if (!ref($handle)) {
+	$handle = "$package::$handle" unless ($handle =~ /(\:\:|\')/);
+    }
+    while (read($handle, $data, 8192)) {
 	$self->add($data);
     }
 }
@@ -32,4 +39,31 @@ sub hexdigest
 	   substr($tmp,32,8));
 }
 
+sub hash
+{
+    my($self, $data) = @_;
+
+    if (ref($self)) {
+	$self->reset();
+    } else {
+	$self = new SHA;
+    }
+    $self->add($data);
+    $self->digest();
+}
+
+sub hexhash
+{
+    my($self, $data) = @_;
+
+    if (ref($self)) {
+	$self->reset();
+    } else {
+	$self = new SHA;
+    }
+    $self->add($data);
+    $self->hexdigest();
+}
+
 1;
+__END__

@@ -1,0 +1,42 @@
+SHA Perl 5 Extension Version 1.1
+
+This is the Secure Hash Algorithm extension to Perl 5. I have used Perl
+5.002 in making this extension; the interface was shamelessly copied
+from the MD5 interface by Neil Winton <N.Winton@axion.bt.co.uk>. I hope
+that it will work under 5.003 and later, but have not yet had a chance
+to check this out.
+
+To build the extension, unpack this distribution (presumably you have
+already succeeded in doing this...), then type
+
+    perl Makefile.PL	# create a Makefile
+    make		# build the extension locally
+    make install	# put it into the system directory
+
+This creates a dynamically-linked extension. I don't have a target to
+make a statically-linked perl, sorry. You should be able to unpack this
+distribution in the ext/ subdirectory of the perl distribution, then
+include SHA in the list of statically-linked extensions during
+configuration of perl, but I have not tried that myself.
+
+After you've installed the SHA extension, you should be able to type
+'perl sha_driver.pl -x' to check if it all worked ok. If the actual
+results don't match the expected ones, check that you have defined or
+undefined LITTLE_ENDIAN properly for your machine, in sha_func.c. The
+default is LITTLE_ENDIAN. By default, the first version of the SHA is
+implemented. By defining USE_MODIFIED_SHA, also in sha_func.c, the
+second version of the SHA can be used instead. The modification to the
+SHA was made by NIST because of unspecified security concerns in the
+first version. Since then, there have been some potential weaknesses
+which have appeared in another secure hash algorithm, MD5 from RSA Data
+Security Inc. It is possible that these changes to the SHA were
+intended to address equivalent weaknesses in it. Please note that I
+have no test results for that second version.
+
+To see how to use the extension, look at sha_driver.pl or at SHA.pod.
+
+This extension is available under the same copyright as Perl itself is.
+The C sources in sha_func.c and in sha.h are in the public domain.
+
+Please direct comments to me:
+Uwe Hollerbach <uh@alumni.caltech.edu> or <uweh@bu.edu>

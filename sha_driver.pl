@@ -11,6 +11,7 @@ sub do_test
     $sha->add($str);
     print "$label:\nEXPECT:   $expect\n";
     print "RESULT 1: " . $sha->hexdigest() . "\n";
+    print "RESULT 2: " . $sha->hexhash($str) . "\n";
 # comment out the following line if you run out of memory
     $run_big_test = 1;
     if (defined($run_big_test)) {
@@ -19,7 +20,7 @@ sub do_test
 	foreach $c (@tmp) {
 	    $sha->add($c);
 	}
-	print "RESULT 2: " . $sha->hexdigest() . "\n";
+	print "RESULT 3: " . $sha->hexdigest() . "\n";
     }
 }
 

@@ -15,6 +15,9 @@ SHA - Perl interface to the NIST Secure Hash Algorithm
     $digest = $context->digest();
     $string = $context->hexdigest();
 
+    $digest = $context->hash($string);
+    $string = $context->hexhash($string);
+
 =head1 DESCRIPTION
 
 The B<SHA> module allows you to use the NIST SHA message digest algorithm
@@ -31,16 +34,22 @@ C<add('bar')>, which in turn produces the same effect as C<add('foobar')>.
 The final message digest value is returned by the B<digest> operation
 as a 16-byte binary string. This operation delivers the result of
 operations since the last B<new> or B<reset> operation. Once the
-operation has been performed, the context must be B<reset> before being
-used to calculate another digest value.
+operation has been performed, the context must be B<reset> before
+being used to calculate another digest value.
 
-Two convenience functions are also provided. The B<addfile> operation
-takes an open file-handle and reads it until end-of file in 8192-byte
-blocks adding the contents to the context. The B<hexdigest> operation
-calls B<digest> and returns the result as a printable string of
-hexdecimal digits in eight-digit groups.
+Several convenience functions are also provided. The B<addfile>
+operation takes an open file-handle and reads it until end-of file in
+8192-byte blocks adding the contents to the context. The B<hexdigest>
+operation calls B<digest> and returns the result as a printable string
+of hexdecimal digits in eight-digit groups. The B<hash> operation
+performs the complete series of steps: B<reset>, B<add>, B<digest> on
+the supplied scalar value, and returns the result as a 16-byte binary
+string. The B<hexhash> operation does the same thing, but returns the
+result in the format of the B<hexdigest> operation.
 
 =head1 EXAMPLE AND VALIDATION
+
+    use SHA 1.1;
 
     $sha = new SHA;
 
@@ -78,6 +87,14 @@ hexdecimal digits in eight-digit groups.
     $sha->add("c");
     print "RESULT 7: " . $sha->hexdigest() . "\n";
 
+    print "RESULT 8: " . $sha->hexhash("abc") . "\n";
+
+    $sha->reset();
+    $sha->add("ab", "c");
+    print "result a: " . unpack("H*", ($sha->digest())) . "\n";
+
+    print "result b: " . unpack("H*", ($sha->hash("abc"))) . "\n";
+
 The above example will produce the output
 
     EXPECT:   0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
@@ -88,6 +105,9 @@ The above example will produce the output
     RESULT 5: 0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
     RESULT 6: 0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
     RESULT 7: 0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
+    RESULT 8: 0164b8a9 14cd2a5e 74c4f7ff 082c4d97 f1edf880
+    result a: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
+    result b: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
 
 provided that the implementation is working correctly.
 
@@ -99,6 +119,6 @@ Uwe Hollerbach following the implementation by Peter Gutmann.
 
 =head1 AUTHOR
 
-The SHA interface was written by Uwe Hollerbach C<uh@alumni.caltech.edu>
-following the MD5 interface written by Neil Winton
+The SHA interface was written by Uwe Hollerbach C<uh@alumni.caltech.edu>,
+shamelessly stealing from the MD5 interface written by Neil Winton
 (C<N.Winton@axion.bt.co.uk>).
